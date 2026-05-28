@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { CalendarDays, CloudSun, Landmark, Map, MapPin, Trophy, Tv, X } from "lucide-react";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
-import ProfileDropdown from "../components/ProfileDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
 import FlightCard, { AirlineBadge } from "../components/FlightCard.jsx";
@@ -84,7 +83,6 @@ export default function Dashboard() {
             <NewspaperDropdown country={country} variant="glass" />
             <div className="flex shrink-0 items-center gap-3">
               <AuthPanel />
-              <ProfileDropdown profile={profile} />
               <a
                 href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026"
                 target="_blank"
