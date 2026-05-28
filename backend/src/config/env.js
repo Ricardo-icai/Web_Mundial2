@@ -1,7 +1,13 @@
 import dotenv from "dotenv";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-dotenv.config({ path: path.resolve(process.cwd(), "..", ".env") });
+const currentFile = fileURLToPath(import.meta.url);
+const backendDir = path.resolve(path.dirname(currentFile), "..", "..");
+const projectRoot = path.resolve(backendDir, "..");
+
+dotenv.config({ path: path.join(projectRoot, ".env") });
+dotenv.config({ path: path.join(backendDir, ".env") });
 dotenv.config();
 
 function numberFromEnv(value, fallback) {
