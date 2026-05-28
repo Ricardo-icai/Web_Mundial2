@@ -55,6 +55,32 @@ async function findCheapestLegFlight({
   };
 }
 
+function totalFlightCost(flights = [], adults = 1) {
+  return flights.reduce((sum, flight) => sum + Number(flight?.price || 0), 0) * adults;
+}
+
+function buildBudgetSummary({ totalPrice, budget, adults, currency, adjusted = false, missingFlights = false }) {
+  const numericBudget = budget == null ? null : Number(budget);
+  const budgetStatus =
+    numericBudget == null ? "no_budget_provided" : totalPrice <= numericBudget ? "within_budget" : "over_budget";
+  const budgetGap = numericBudget == null ? 0 : Math.max(0, totalPrice - numericBudget);
+  return {
+    budgetStatus,
+    adults,
+    flightSubtotalPerPerson: adults > 0 ? totalPrice / adults : totalPrice,
+    budgetGap,
+    adjustedToCheapestFlights: adjusted,
+    culturalPlanRecommended: budgetStatus === "over_budget",
+    missingFlights,
+    message:
+      budgetStatus === "no_budget_provided"
+        ? "No hay presupuesto marcado para comparar el viaje."
+        : budgetStatus === "within_budget"
+          ? "Correcto: los vuelos entran dentro del presupuesto marcado."
+          : "El viaje no entra en el presupuesto incluso usando las opciones de vuelo mas baratas encontradas."
+  };
+}
+
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
@@ -153,11 +179,18 @@ export async function enrichFollowTeamPlanWithIgnav(plan, profile) {
     flight: leg.recommended
   }));
 
-  const totalPrice = updatedLegs.reduce((sum, leg) => sum + Number(leg?.recommended?.price || 0), 0);
+  const selectedFlights = updatedLegs.map((leg) => leg?.recommended).filter(Boolean);
+  const totalPrice = totalFlightCost(selectedFlights, adults);
   const currency = updatedLegs.find((leg) => leg?.recommended?.currency)?.recommended?.currency || "USD";
   const budget = plan?.profile?.budget ?? profile?.budget ?? null;
-  const budgetStatus =
-    budget == null ? "no_budget_provided" : totalPrice <= Number(budget) ? "within_budget" : "over_budget";
+  const budgetSummary = buildBudgetSummary({
+    totalPrice,
+    budget,
+    adults,
+    currency,
+    adjusted: true,
+    missingFlights: selectedFlights.length < updatedLegs.length
+  });
 
   return {
     ...plan,
@@ -171,7 +204,7 @@ export async function enrichFollowTeamPlanWithIgnav(plan, profile) {
       ...(plan.costs || {}),
       estimatedTotalCost: totalPrice,
       currency,
-      budgetStatus
+      ...budgetSummary
     },
     recommendationText:
       totalPrice > 0
@@ -206,15 +239,18 @@ export async function enrichTravelCityPlanWithIgnav(plan, profile) {
   const updatedRouteSegments = (plan?.routeSegments || []).map((segment, index) =>
     index === 0 ? { ...segment, flight: selected || null } : segment
   );
-  const estimatedTotalCost = Number(selected?.price || 0);
+  const adults = Number(profile?.adults ?? plan?.profile?.adults ?? 1);
+  const estimatedTotalCost = totalFlightCost(selected ? [selected] : [], adults);
   const currency = selected?.currency || plan?.costs?.currency || "USD";
   const budget = plan?.profile?.budget ?? profile?.budget ?? null;
-  const budgetStatus =
-    budget == null
-      ? "no_budget_provided"
-      : estimatedTotalCost <= Number(budget)
-        ? "within_budget"
-        : "over_budget";
+  const budgetSummary = buildBudgetSummary({
+    totalPrice: estimatedTotalCost,
+    budget,
+    adults,
+    currency,
+    adjusted: Boolean(selected),
+    missingFlights: !selected
+  });
 
   return {
     ...plan,
@@ -230,7 +266,7 @@ export async function enrichTravelCityPlanWithIgnav(plan, profile) {
       ...(plan.costs || {}),
       estimatedTotalCost,
       currency,
-      budgetStatus
+      ...budgetSummary
     },
     recommendationText: selected
       ? "Vuelo calculado con Ignav via backend para la ciudad elegida, usando la opcion mas barata en la fecha exacta."

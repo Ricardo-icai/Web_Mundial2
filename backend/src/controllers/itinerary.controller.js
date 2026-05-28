@@ -336,8 +336,15 @@ export async function buildTravelPlan(req, res) {
     cityImageUrl = null;
   }
 
-  const recommendedPrice = rankedFlights.recommended?.price || 0;
-  const estimatedTotalCost = recommendedPrice * adults;
+  const selectedRouteFlights =
+    mode === "follow_team"
+      ? followTeamRoute.routeFlights.map((leg) => leg.recommended).filter(Boolean)
+      : rankedFlights.recommended
+        ? [rankedFlights.recommended]
+        : [];
+  const recommendedPrice = selectedRouteFlights.reduce((sum, flight) => sum + Number(flight?.price || 0), 0);
+  const estimatedTotalCost = recommendedPrice * Number(adults || 1);
+  const flightCurrency = selectedRouteFlights.find((flight) => flight?.currency)?.currency || rankedFlights.recommended?.currency || "USD";
   const watchSpots = mode === "stay_origin" ? buildWatchSpots(originCity) : [];
   const destinationGuide = await getDestinationGuide({
     city: effectiveDestinationCity,
@@ -362,6 +369,13 @@ export async function buildTravelPlan(req, res) {
       : estimatedTotalCost <= Number(budget)
         ? "within_budget"
         : "over_budget";
+  const budgetGap = budget == null ? 0 : Math.max(0, estimatedTotalCost - Number(budget));
+  const costMessage =
+    budgetStatus === "no_budget_provided"
+      ? "No hay presupuesto marcado para comparar el viaje."
+      : budgetStatus === "within_budget"
+        ? "Correcto: los vuelos entran dentro del presupuesto marcado."
+        : "El viaje no entra en el presupuesto con los vuelos encontrados.";
 
   res.json({
     ok: true,
@@ -408,8 +422,13 @@ export async function buildTravelPlan(req, res) {
     },
     costs: {
       estimatedTotalCost,
-      currency: rankedFlights.recommended?.currency || "USD",
-      budgetStatus
+      currency: flightCurrency,
+      budgetStatus,
+      budgetGap,
+      adults,
+      flightSubtotalPerPerson: Number(adults || 1) > 0 ? estimatedTotalCost / Number(adults || 1) : estimatedTotalCost,
+      culturalPlanRecommended: budgetStatus === "over_budget",
+      message: costMessage
     }
   });
 }

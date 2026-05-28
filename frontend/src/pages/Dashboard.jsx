@@ -5,7 +5,7 @@ import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import ProfileDropdown from "../components/ProfileDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
-import FlightCard from "../components/FlightCard.jsx";
+import FlightCard, { AirlineBadge } from "../components/FlightCard.jsx";
 import MatchList from "../components/MatchList.jsx";
 import OptionMenu from "../components/OptionMenu.jsx";
 import TeamBadge from "../components/TeamBadge.jsx";
@@ -63,12 +63,15 @@ export default function Dashboard() {
   const selectedBudgetLabel =
     selectedBudget == null ? "Sin limite" : formatCurrency(Number(selectedBudget), plan.costs.currency);
   const isOverBudget = plan.costs.budgetStatus === "over_budget";
-  const budgetStatusLabel = isOverBudget ? "Viaje por encima del presupuesto" : "Viaje encontrado exitosamente";
+  const hasBudget = plan.costs.budgetStatus !== "no_budget_provided";
+  const budgetStatusLabel = !hasBudget ? "Sin presupuesto marcado" : isOverBudget ? "No entra en presupuesto" : "Presupuesto correcto";
   const overBudgetAmount = Math.max(
     0,
-    Number(plan.costs.estimatedTotalCost || 0) - Number(selectedBudget || 0)
+    Number(plan.costs.budgetGap ?? Number(plan.costs.estimatedTotalCost || 0) - Number(selectedBudget || 0))
   );
   const overBudgetLabel = formatCurrency(overBudgetAmount, plan.costs.currency);
+  const flightTotalLabel = formatCurrency(Number(plan.costs.estimatedTotalCost || 0), plan.costs.currency);
+  const adultsCount = Number(plan?.profile?.adults ?? profile?.adults ?? 1);
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-8 text-slate-950">
@@ -190,6 +193,19 @@ export default function Dashboard() {
               <div className="p-4">
                 <h2 className="text-lg font-black">Resumen de viaje</h2>
                 <p className="mt-1 text-sm leading-6 text-slate-700">{plan.recommendationText}</p>
+                {!isLocalPlan && (
+                  <div className={`mt-3 rounded-md px-3 py-2 text-sm font-semibold ${isOverBudget ? "bg-red-50 text-red-700" : hasBudget ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                    <p>{plan.costs.message || budgetStatusLabel}</p>
+                    <p className="mt-1">
+                      Vuelos para {adultsCount} {adultsCount === 1 ? "viajero" : "viajeros"}: {flightTotalLabel}
+                    </p>
+                    {isOverBudget && (
+                      <Link to="/attractions" className="mt-2 inline-flex rounded-md bg-brandBlue px-3 py-2 text-xs font-black text-white">
+                        Ver planes culturales
+                      </Link>
+                    )}
+                  </div>
+                )}
                 {localTime && (
                   <p className="mt-3 rounded-md bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">
                     Hora local destino: {localTime.datetime} ({localTime.timezone})
@@ -277,9 +293,9 @@ export default function Dashboard() {
           <>
             {plan.flightError && <p className="mt-4 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
             <section className="mt-4 grid gap-4 md:grid-cols-3">
-              <FlightCard label="Mas barato" flight={plan.flights.cheapest} />
-              <FlightCard label="Mas rapido" flight={plan.flights.fastest} />
-              <FlightCard label="Recomendado" flight={plan.flights.recommended} />
+              <FlightCard label="Mas barato" flight={plan.flights.cheapest} adults={adultsCount} />
+              <FlightCard label="Mas rapido" flight={plan.flights.fastest} adults={adultsCount} />
+              <FlightCard label="Recomendado" flight={plan.flights.recommended} adults={adultsCount} />
             </section>
           </>
         )}
@@ -302,7 +318,12 @@ export default function Dashboard() {
                   {leg.recommended ? (
                     <div className="mt-2 space-y-1 text-sm font-semibold text-slate-700">
                       <p>Precio: {leg.recommended.price} {leg.recommended.currency}</p>
-                      <p>Aerolinea: {leg.recommended.airline || leg.recommended.carrierCode || "Por confirmar"}</p>
+                      {adultsCount > 1 && (
+                        <p>Total tramo {adultsCount} viajeros: {Number(leg.recommended.price || 0) * adultsCount} {leg.recommended.currency}</p>
+                      )}
+                      <p className="pt-1">
+                        <AirlineBadge flight={leg.recommended} />
+                      </p>
                       <p>Ruta vuelo: {leg.recommended.originIata} a {leg.recommended.destinationIata}</p>
                       <p>Duracion: {leg.recommended.duration}</p>
                       <p>
