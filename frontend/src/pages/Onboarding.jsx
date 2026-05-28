@@ -7,7 +7,7 @@ import NewsMagazine from "../components/NewsMagazine.jsx";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import TeamCountrySelect from "../components/TeamCountrySelect.jsx";
 import LoadingOverlay from "../components/LoadingOverlay.jsx";
-import { buildPlan } from "../services/api.client.js";
+import { buildPlan, enrichFollowTeamPlanWithIgnav, enrichTravelCityPlanWithIgnav } from "../services/api.client.js";
 import { usePlannerStore } from "../store/planner.store.js";
 import { newsCountryOptions } from "../data/newsSources.js";
 import { fifa26Logo, heroImage } from "../data/worldCupVisuals.js";
@@ -128,7 +128,20 @@ export default function Onboarding() {
         wait(2000)
       ]);
       if (result.requestError) throw result.requestError;
-      const response = result.response;
+      const baseResponse = result.response;
+      let response = baseResponse;
+      try {
+        if (payload.mode === "follow_team" && baseResponse?.followTeamRoute?.legs?.length) {
+          response = await enrichFollowTeamPlanWithIgnav(baseResponse, payload);
+        } else if (payload.mode === "travel_city") {
+          response = await enrichTravelCityPlanWithIgnav(baseResponse, payload);
+        }
+      } catch (ignavError) {
+        response = {
+          ...baseResponse,
+          flightError: ignavError.message || "No se pudo completar la consulta de vuelos con Ignav."
+        };
+      }
       setCountry(form.country);
       setProfile(response.profile || payload);
       setPlan(response);

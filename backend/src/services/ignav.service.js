@@ -52,6 +52,14 @@ function normalizeOffer(raw, context, index) {
   if (!price) return null;
 
   const segments = raw?.outbound?.segments || raw?.itinerary?.segments || [];
+  const stopoverAirports = segments.slice(0, -1).map((segment) => segment?.arrival_airport).filter(Boolean);
+  const airline =
+    raw?.outbound?.carrier ||
+    segments[0]?.operating_carrier_name ||
+    segments[0]?.marketing_carrier_code ||
+    raw.airline ||
+    raw.carrier ||
+    "";
   const duration =
     raw.duration || raw.total_duration || raw?.itinerary?.duration || raw?.outbound?.duration_minutes || "";
   const stops = Number(
@@ -84,6 +92,8 @@ function normalizeOffer(raw, context, index) {
       raw?.outbound?.carrier ||
       segments[0]?.marketing_carrier_code ||
       "",
+    airline,
+    stopoverAirports,
     originIata: context.originIata,
     destinationIata: context.destinationIata,
     cabinClass: context.cabinClass,

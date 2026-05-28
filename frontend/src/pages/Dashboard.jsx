@@ -272,19 +272,23 @@ export default function Dashboard() {
         )}
 
         {!isLocalPlan && !isFollowTeamPlan && (
-          <section className="mt-4 grid gap-4 md:grid-cols-3">
-            <FlightCard label="Mas barato" flight={plan.flights.cheapest} />
-            <FlightCard label="Mas rapido" flight={plan.flights.fastest} />
-            <FlightCard label="Recomendado" flight={plan.flights.recommended} />
-          </section>
+          <>
+            {plan.flightError && <p className="mt-4 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
+            <section className="mt-4 grid gap-4 md:grid-cols-3">
+              <FlightCard label="Mas barato" flight={plan.flights.cheapest} />
+              <FlightCard label="Mas rapido" flight={plan.flights.fastest} />
+              <FlightCard label="Recomendado" flight={plan.flights.recommended} />
+            </section>
+          </>
         )}
 
         {profile.mode === "follow_team" && (plan?.followTeamRoute?.legs || []).length > 0 && (
           <section className="mt-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="text-lg font-black">Ruta para seguir a tu seleccion</h2>
             <p className="mt-1 text-sm font-medium text-slate-600">
-              Tramos sugeridos para llegar a todos los partidos dentro de tus fechas.
+              Tramos calculados para llegar a todos los partidos con la opcion mas barata por tramo y fecha exacta.
             </p>
+            {plan.flightError && <p className="mt-2 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               {plan.followTeamRoute.legs.map((leg, index) => (
                 <article key={`${leg.fromCity}-${leg.toCity}-${index + 1}`} className="rounded-md border border-slate-200 p-3">
@@ -292,13 +296,26 @@ export default function Dashboard() {
                   <p className="mt-1 text-sm font-black text-slate-950">
                     {leg.fromCity} a {leg.toCity}
                   </p>
-                  <p className="mt-1 text-sm font-medium text-slate-600">Salida sugerida: {leg.departureDate}</p>
+                  <p className="mt-1 text-sm font-medium text-slate-600">Fecha exacta de salida: {leg.departureDate}</p>
                   {leg.recommended ? (
-                    <p className="mt-1 text-sm font-semibold text-slate-700">
-                      {leg.recommended.price} {leg.recommended.currency}, {leg.recommended.duration}, {leg.recommended.stops} escalas
-                    </p>
+                    <div className="mt-2 space-y-1 text-sm font-semibold text-slate-700">
+                      <p>Precio: {leg.recommended.price} {leg.recommended.currency}</p>
+                      <p>Aerolinea: {leg.recommended.airline || leg.recommended.carrierCode || "Por confirmar"}</p>
+                      <p>Ruta vuelo: {leg.recommended.originIata} a {leg.recommended.destinationIata}</p>
+                      <p>Duracion: {leg.recommended.duration}</p>
+                      <p>
+                        Escalas: {leg.recommended.stops}
+                        {leg.recommended.stopoverAirports?.length
+                          ? ` (${leg.recommended.stopoverAirports.join(", ")})`
+                          : leg.recommended.stops === 0
+                            ? " (vuelo directo)"
+                            : ""}
+                      </p>
+                    </div>
                   ) : (
-                    <p className="mt-1 text-sm font-semibold text-amber-700">No se encontro vuelo automatico para este tramo.</p>
+                    <p className="mt-1 text-sm font-semibold text-amber-700">
+                      {leg.searchError || "No se encontro vuelo automatico para este tramo."}
+                    </p>
                   )}
                 </article>
               ))}
@@ -389,7 +406,7 @@ export default function Dashboard() {
                       </p>
                       {leg?.recommended ? (
                         <p className="text-sm font-medium text-slate-600">
-                          Como llegar: vuelo sugerido {leg.fromCity} a {leg.toCity}, {leg.recommended.price} {leg.recommended.currency}, {leg.recommended.stops} escalas.
+                          Como llegar: {leg.recommended.originIata} a {leg.recommended.destinationIata}, {leg.recommended.price} {leg.recommended.currency}, aerolinea {leg.recommended.airline || leg.recommended.carrierCode || "por confirmar"}, {leg.recommended.stops} escalas.
                         </p>
                       ) : (
                         <p className="text-sm font-medium text-slate-600">

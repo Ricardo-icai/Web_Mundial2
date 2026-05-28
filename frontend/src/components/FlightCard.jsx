@@ -20,6 +20,12 @@ export default function FlightCard({ label, flight }) {
       <p className="text-sm text-slate-600">
         Duracion: {flight.duration} | Escalas: {flight.stops}
       </p>
+      <p className="text-sm text-slate-600">
+        Aerolinea: {flight.airline || flight.carrierCode || "Por confirmar"}
+      </p>
+      {flight.stopoverAirports?.length > 0 && (
+        <p className="text-sm text-slate-600">Escalas en: {flight.stopoverAirports.join(", ")}</p>
+      )}
     </div>
   );
 }
