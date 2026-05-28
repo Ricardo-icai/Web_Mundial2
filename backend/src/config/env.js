@@ -25,6 +25,8 @@ export const env = {
   redisUrl: process.env.REDIS_URL || "",
   jwtSecret: process.env.JWT_SECRET || "replace_me",
   ignavApiKey: process.env.IGNAV_API_KEY || "",
+  ignavUsername: process.env.IGNAV_USERNAME || "",
+  ignavPassword: process.env.IGNAV_PASSWORD || "",
   ignavBaseUrl: process.env.IGNAV_BASE_URL || "https://ignav.com/api",
   airportsDataUrl:
     process.env.AIRPORTS_DATA_URL || "https://raw.githubusercontent.com/mwgg/Airports/master/airports.json",

@@ -10,6 +10,20 @@ function assertIgnavKey() {
   }
 }
 
+function ignavHeaders() {
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Api-Key": env.ignavApiKey
+  };
+
+  if (env.ignavUsername && env.ignavPassword) {
+    const credentials = Buffer.from(`${env.ignavUsername}:${env.ignavPassword}`).toString("base64");
+    headers.Authorization = `Basic ${credentials}`;
+  }
+
+  return headers;
+}
+
 function durationToMinutes(value) {
   if (!value) return 0;
   if (typeof value === "number") return value;
@@ -114,10 +128,7 @@ async function searchIgnavOneWayFare({
 
   const response = await fetch(`${env.ignavBaseUrl}/fares/one-way`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Api-Key": env.ignavApiKey
-    },
+    headers: ignavHeaders(),
     body: JSON.stringify({
       origin: originIata,
       destination: destinationIata,
