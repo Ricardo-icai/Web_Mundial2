@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { login } from "../controllers/auth.controller.js";
+import { login, register } from "../controllers/auth.controller.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
 const router = Router();
 
+router.post("/register", asyncHandler(register));
 router.post("/login", asyncHandler(login));
 
 export default router;

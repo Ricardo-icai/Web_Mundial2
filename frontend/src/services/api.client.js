@@ -78,6 +78,20 @@ export function buildPlan(body) {
   });
 }
 
+export function registerUser(body) {
+  return request("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+}
+
+export function loginUser(body) {
+  return request("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+}
+
 export function fetchAirports(city) {
   return request(`/flights/airports?city=${encodeURIComponent(city)}`);
 }
