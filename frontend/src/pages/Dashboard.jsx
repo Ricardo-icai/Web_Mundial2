@@ -9,7 +9,6 @@ import MatchList from "../components/MatchList.jsx";
 import OptionMenu from "../components/OptionMenu.jsx";
 import TeamBadge from "../components/TeamBadge.jsx";
 import Timeline from "../components/Timeline.jsx";
-import TeamShowcase from "../components/TeamShowcase.jsx";
 import { usePlannerStore } from "../store/planner.store.js";
 import { apiAssetUrl, fetchCurrentTime } from "../services/api.client.js";
 import { fanImage, fifa26Logo, heroImage, stadiumImage } from "../data/worldCupVisuals.js";
@@ -434,12 +433,6 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
-
-        {!isTravelCityPlan && (
-          <section className="mt-8">
-            <TeamShowcase />
-          </section>
-        )}
 
       </div>
 
