@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ChevronDown, Flag, Home, MapPinned, Plane, Shield, Trophy, Users } from "lucide-react";
 import AirportPicker from "../components/AirportPicker.jsx";
+import CityAutocomplete from "../components/CityAutocomplete.jsx";
 import HostVenueSelect from "../components/HostVenueSelect.jsx";
 import NewsMagazine from "../components/NewsMagazine.jsx";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
@@ -265,22 +266,19 @@ export default function Onboarding() {
                   onChange={(favoriteTeam) => setForm((prev) => ({ ...prev, favoriteTeam }))}
                 />
               )}
-          <label className="text-sm font-bold">
-            Ciudad origen
-            <input
-              className="mt-1 w-full rounded-md border border-white/20 bg-white/85 px-3 py-2 font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-200 focus:ring-2 focus:ring-cyan-200/30"
-              name="originCity"
-              value={form.originCity}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  originCity: event.target.value,
-                  originAirport: null
-                }))
-              }
-              required
-            />
-          </label>
+          <CityAutocomplete
+            label="Ciudad origen"
+            name="originCity"
+            value={form.originCity}
+            onChange={(originCity) =>
+              setForm((prev) => ({
+                ...prev,
+                originCity,
+                originAirport: null
+              }))
+            }
+            required
+          />
           {form.mode !== "stay_origin" && (
             <AirportPicker
               city={form.originCity}
