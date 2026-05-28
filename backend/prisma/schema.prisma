@@ -15,6 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profile   Profile?
+  favorites FavoriteItinerary[]
 }
 
 model Profile {
@@ -92,4 +93,23 @@ model CarRental {
   city        String
   dailyPrice  Float?
   createdAt   DateTime @default(now())
+}
+
+model FavoriteItinerary {
+  id              String   @id @default(cuid())
+  userId          String
+  fingerprint     String
+  title           String?
+  mode            String?
+  originCity      String?
+  destinationCity String?
+  departureDate   DateTime?
+  endDate         DateTime?
+  payload         Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fingerprint])
+  @@index([userId, createdAt])
 }

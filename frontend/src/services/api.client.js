@@ -82,12 +82,14 @@ function buildBudgetSummary({ totalPrice, budget, adults, currency, adjusted = f
 }
 
 async function request(path, options = {}) {
+  const { authToken, headers: customHeaders = {}, ...fetchOptions } = options;
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {})
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...customHeaders
     },
-    ...options
+    ...fetchOptions
   });
 
   const payload = await response.json();
@@ -115,6 +117,28 @@ export function loginUser(body) {
   return request("/auth/login", {
     method: "POST",
     body: JSON.stringify(body)
+  });
+}
+
+export function saveFavoriteItinerary(body, authToken) {
+  return request("/favorites", {
+    method: "POST",
+    authToken,
+    body: JSON.stringify(body)
+  });
+}
+
+export function fetchFavoriteItineraries(authToken) {
+  return request("/favorites", {
+    method: "GET",
+    authToken
+  });
+}
+
+export function deleteFavoriteItinerary(favoriteId, authToken) {
+  return request(`/favorites/${encodeURIComponent(favoriteId)}`, {
+    method: "DELETE",
+    authToken
   });
 }
 

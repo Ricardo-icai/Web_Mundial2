@@ -5,6 +5,7 @@ import MapView from "../pages/MapView.jsx";
 import Itinerary from "../pages/Itinerary.jsx";
 import Attractions from "../pages/Attractions.jsx";
 import Tournament from "../pages/Tournament.jsx";
+import Favorites from "../pages/Favorites.jsx";
 
 export default function AppRouter() {
   return (
@@ -14,6 +15,7 @@ export default function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/map" element={<MapView />} />
         <Route path="/itinerary" element={<Itinerary />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/attractions" element={<Attractions />} />
         <Route path="/tournament" element={<Tournament />} />
         <Route path="*" element={<Navigate to="/" replace />} />

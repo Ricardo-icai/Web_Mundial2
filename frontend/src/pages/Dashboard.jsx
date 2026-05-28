@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { CalendarDays, CloudSun, Landmark, Map, MapPin, Trophy, Tv, X } from "lucide-react";
+import { CalendarDays, CloudSun, Landmark, Loader2, Map, MapPin, Star, Trophy, Tv, X } from "lucide-react";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
@@ -10,7 +10,7 @@ import OptionMenu from "../components/OptionMenu.jsx";
 import TeamBadge from "../components/TeamBadge.jsx";
 import Timeline from "../components/Timeline.jsx";
 import { usePlannerStore } from "../store/planner.store.js";
-import { apiAssetUrl, fetchCurrentTime } from "../services/api.client.js";
+import { apiAssetUrl, fetchCurrentTime, saveFavoriteItinerary } from "../services/api.client.js";
 import { fanImage, fifa26Logo, heroImage, stadiumImage } from "../data/worldCupVisuals.js";
 import { formatKickoffForTimezone, formatUtcLabel } from "../utils/matchTime.js";
 import { teamFlagUrl } from "../utils/teamVisuals.js";
@@ -30,9 +30,15 @@ const formatCurrency = (amount, currency = "USD") =>
   }).format(amount);
 
 export default function Dashboard() {
-  const { plan, profile, country } = usePlannerStore();
+  const { plan, profile, country, authToken } = usePlannerStore();
   const [localTime, setLocalTime] = useState(null);
   const [showAlternatives, setShowAlternatives] = useState(Boolean(plan?.matchPlan?.notice));
+  const [savingFavorite, setSavingFavorite] = useState(false);
+  const [favoriteSaved, setFavoriteSaved] = useState(false);
+  const [favoriteError, setFavoriteError] = useState("");
+  const [savingFlightFavoriteKey, setSavingFlightFavoriteKey] = useState("");
+  const [flightFavoriteMessage, setFlightFavoriteMessage] = useState("");
+  const [flightFavoriteError, setFlightFavoriteError] = useState("");
   const isLocalPlan = profile.mode === "stay_origin";
   const isFollowTeamPlan = profile.mode === "follow_team";
   const isTravelCityPlan = profile.mode === "travel_city";
@@ -71,6 +77,82 @@ export default function Dashboard() {
   const overBudgetLabel = formatCurrency(overBudgetAmount, plan.costs.currency);
   const flightTotalLabel = formatCurrency(Number(plan.costs.estimatedTotalCost || 0), plan.costs.currency);
   const adultsCount = Number(plan?.profile?.adults ?? profile?.adults ?? 1);
+  const favoriteTitle = useMemo(() => {
+    const modeLabel =
+      profile?.mode === "follow_team"
+        ? `Seguir ${profile?.favoriteTeam || "seleccion"}`
+        : profile?.mode === "stay_origin"
+          ? `Ver Mundial en ${profile?.originCity || "ciudad"}`
+          : "Viaje Mundial";
+    const origin = profile?.originCity || plan?.profile?.originCity || "Origen";
+    const destination = profile?.destinationCity || plan?.profile?.destinationCity || "Destino";
+    return `${modeLabel}: ${origin} -> ${destination}`;
+  }, [plan, profile]);
+
+  const onSaveFavorite = async () => {
+    if (!authToken || !profile || !plan || savingFavorite) return;
+    setSavingFavorite(true);
+    setFavoriteError("");
+    try {
+      await saveFavoriteItinerary(
+        {
+          title: favoriteTitle,
+          profile,
+          plan
+        },
+        authToken
+      );
+      setFavoriteSaved(true);
+    } catch (error) {
+      setFavoriteError(error.message || "No se pudo guardar en favoritos.");
+    } finally {
+      setSavingFavorite(false);
+    }
+  };
+
+  const flightLabelByKey = {
+    cheapest: "Mas barato",
+    fastest: "Mas rapido",
+    recommended: "Recomendado"
+  };
+
+  const onSaveTravelFlightFavorite = async (flightKey) => {
+    if (!authToken || !profile || !plan || savingFlightFavoriteKey) return;
+    const selectedFlight = plan?.flights?.[flightKey];
+    if (!selectedFlight) return;
+
+    setSavingFlightFavoriteKey(flightKey);
+    setFlightFavoriteError("");
+    setFlightFavoriteMessage("");
+    try {
+      const planSnapshot = {
+        ...plan,
+        favoriteSelection: {
+          type: "travel_city_flight",
+          flightKey,
+          flightLabel: flightLabelByKey[flightKey] || "Vuelo",
+          flight: selectedFlight
+        },
+        routeSegments: (plan?.routeSegments || []).map((segment, index) =>
+          index === 0 ? { ...segment, flight: selectedFlight } : segment
+        )
+      };
+
+      await saveFavoriteItinerary(
+        {
+          title: `${favoriteTitle} - ${flightLabelByKey[flightKey] || "Vuelo"}`,
+          profile,
+          plan: planSnapshot
+        },
+        authToken
+      );
+      setFlightFavoriteMessage(`Guardado en favoritos con vuelo "${flightLabelByKey[flightKey] || "Vuelo"}".`);
+    } catch (error) {
+      setFlightFavoriteError(error.message || "No se pudo guardar en favoritos.");
+    } finally {
+      setSavingFlightFavoriteKey("");
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-8 text-slate-950">
@@ -290,20 +372,71 @@ export default function Dashboard() {
         {!isLocalPlan && !isFollowTeamPlan && (
           <>
             {plan.flightError && <p className="mt-4 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
+            {!authToken && (
+              <p className="mt-4 text-xs font-semibold text-slate-500">
+                Inicia sesion para guardar un vuelo con su itinerario en favoritos.
+              </p>
+            )}
+            {flightFavoriteError && <p className="mt-2 text-sm font-semibold text-amber-700">{flightFavoriteError}</p>}
+            {flightFavoriteMessage && <p className="mt-2 text-sm font-semibold text-emerald-700">{flightFavoriteMessage}</p>}
             <section className="mt-4 grid gap-4 md:grid-cols-3">
-              <FlightCard label="Mas barato" flight={plan.flights.cheapest} adults={adultsCount} />
-              <FlightCard label="Mas rapido" flight={plan.flights.fastest} adults={adultsCount} />
-              <FlightCard label="Recomendado" flight={plan.flights.recommended} adults={adultsCount} />
+              {["cheapest", "fastest", "recommended"].map((flightKey) => (
+                <div key={flightKey} className="space-y-2">
+                  <FlightCard
+                    label={flightLabelByKey[flightKey]}
+                    flight={plan?.flights?.[flightKey]}
+                    adults={adultsCount}
+                  />
+                  {authToken && (
+                    <button
+                      type="button"
+                      disabled={!plan?.flights?.[flightKey] || Boolean(savingFlightFavoriteKey)}
+                      onClick={() => onSaveTravelFlightFavorite(flightKey)}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {savingFlightFavoriteKey === flightKey ? (
+                        <>
+                          <Loader2 size={13} className="animate-spin" />
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <Star size={13} />
+                          Guardar en favoritos este vuelo + itinerario
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              ))}
             </section>
           </>
         )}
 
         {profile.mode === "follow_team" && (plan?.followTeamRoute?.legs || []).length > 0 && (
           <section className="mt-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="text-lg font-black">Ruta para seguir a tu seleccion</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-black">Ruta para seguir a tu seleccion</h2>
+              {authToken && (
+                <button
+                  type="button"
+                  onClick={onSaveFavorite}
+                  disabled={savingFavorite}
+                  title={favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-md border ${
+                    favoriteSaved ? "border-amber-400 bg-amber-50 text-amber-500" : "border-slate-300 bg-white text-slate-600"
+                  }`}
+                >
+                  {savingFavorite ? <Loader2 className="animate-spin" size={14} /> : <Star size={14} className={favoriteSaved ? "fill-amber-400" : ""} />}
+                </button>
+              )}
+            </div>
             <p className="mt-1 text-sm font-medium text-slate-600">
               Tramos calculados para llegar a todos los partidos con la opcion mas barata por tramo y fecha exacta.
             </p>
+            {!authToken && <p className="mt-1 text-xs font-semibold text-slate-500">Inicia sesion para guardar este itinerario en favoritos.</p>}
+            {favoriteError && <p className="mt-1 text-sm font-semibold text-amber-700">{favoriteError}</p>}
+            {favoriteSaved && <p className="mt-1 text-sm font-semibold text-emerald-700">Itinerario guardado en favoritos.</p>}
             {plan.flightError && <p className="mt-2 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               {plan.followTeamRoute.legs.map((leg, index) => (
