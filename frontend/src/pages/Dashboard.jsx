@@ -39,6 +39,7 @@ export default function Dashboard() {
   const effectiveDestinationCity =
     plan?.profile?.destinationCity || plan?.matchPlan?.selectedCity || profile?.destinationCity || profile?.originCity;
   const followTeamLegs = plan?.followTeamRoute?.legs || [];
+  const weatherCities = plan?.weatherCities?.length ? plan.weatherCities : plan?.weather ? [plan.weather] : [];
   const travelerTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   useEffect(() => {
@@ -417,13 +418,27 @@ export default function Dashboard() {
                 <CloudSun size={19} className="text-brandRed" />
                 <h3 className="text-lg font-black">Clima</h3>
               </div>
-              {plan.weather ? (
-                <div className="space-y-1 text-sm text-slate-700">
-                  <p className="text-2xl font-black text-slate-950">
-                    {plan.weather.city}: {plan.weather.temperatureC} C
-                  </p>
-                  <p>{plan.weather.description}</p>
-                  <p>Humedad: {plan.weather.humidity}%</p>
+              {weatherCities.length > 0 ? (
+                <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-2 xl:grid-cols-1">
+                  {weatherCities.map((weatherItem) => (
+                    <article key={weatherItem.city} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                      {weatherItem.error ? (
+                        <>
+                          <p className="font-black text-slate-950">{weatherItem.city}</p>
+                          <p className="mt-1 text-sm text-slate-500">Sin datos de clima disponibles.</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-xl font-black text-slate-950">
+                            {weatherItem.city}: {weatherItem.temperatureC} C
+                          </p>
+                          <p className="mt-1">{weatherItem.description}</p>
+                          <p>Humedad: {weatherItem.humidity}%</p>
+                          {weatherItem.windSpeed != null && <p>Viento: {weatherItem.windSpeed} km/h</p>}
+                        </>
+                      )}
+                    </article>
+                  ))}
                 </div>
               ) : (
                 <p className="text-sm text-slate-500">

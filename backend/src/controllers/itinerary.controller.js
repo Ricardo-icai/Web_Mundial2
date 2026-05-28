@@ -299,13 +299,35 @@ export async function buildTravelPlan(req, res) {
     recommended: rankedFlights.recommended
   });
 
+  const routeCities =
+    mode === "follow_team"
+      ? [...new Set((enrichedRelevantMatches || []).map((match) => match.city).filter(Boolean))]
+      : [effectiveDestinationCity].filter(Boolean);
   let weather = null;
   let weatherError = null;
+  let weatherCities = [];
   let cityImageUrl = null;
-  try {
-    weather = await getWeatherByCity(effectiveDestinationCity);
-  } catch (error) {
-    weatherError = error.message;
+
+  if (routeCities.length > 0) {
+    const weatherResults = await Promise.all(
+      routeCities.map(async (city) => {
+        try {
+          return { ok: true, city, weather: await getWeatherByCity(city) };
+        } catch (error) {
+          return { ok: false, city, error: error.message };
+        }
+      })
+    );
+    weatherCities = weatherResults.map((result) =>
+      result.ok
+        ? result.weather
+        : {
+            city: result.city,
+            error: result.error
+          }
+    );
+    weather = weatherCities.find((item) => !item.error) || null;
+    weatherError = weather ? null : weatherCities.find((item) => item.error)?.error || null;
   }
 
   try {
@@ -324,7 +346,6 @@ export async function buildTravelPlan(req, res) {
 
   let destinationGuides = null;
   if (mode === "follow_team") {
-    const routeCities = [...new Set((enrichedRelevantMatches || []).map((match) => match.city).filter(Boolean))];
     destinationGuides = await Promise.all(
       routeCities.map((city) =>
         getDestinationGuide({
@@ -371,6 +392,7 @@ export async function buildTravelPlan(req, res) {
     itinerary,
     recommendationText,
     weather,
+    weatherCities,
     weatherError,
     cityImageUrl,
     destinationGuide,
