@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ChevronDown, Flag, Globe2, Home, MapPinned, Plane, Shield, Trophy } from "lucide-react";
 import AirportPicker from "../components/AirportPicker.jsx";
@@ -13,6 +13,7 @@ import { buildPlan, enrichFollowTeamPlanWithIgnav, enrichTravelCityPlanWithIgnav
 import { usePlannerStore } from "../store/planner.store.js";
 import { newsCountryOptions } from "../data/newsSources.js";
 import { fifa26Logo, heroImage } from "../data/worldCupVisuals.js";
+import titleRightVideo from "../assets/title-right-video.mp4";
 
 const budgetRanges = [
   { label: "Sin limite", value: "" },
@@ -57,6 +58,7 @@ export default function Onboarding() {
   const { profile, setProfile, setPlan, setError, setLoading, loading, error, setCountry, authToken } = usePlannerStore();
   const initialMode = searchParams.get("mode") || profile?.mode || "travel_city";
   const [authOpenRequestToken, setAuthOpenRequestToken] = useState(0);
+  const heroVideoRef = useRef(null);
 
   const [form, setForm] = useState({
     mode: initialMode,
@@ -79,6 +81,17 @@ export default function Onboarding() {
     [form.mode]
   );
   const SelectedPlanIcon = selectedPlan.icon;
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  }, []);
 
   const canSubmit = useMemo(
     () => {
@@ -195,10 +208,28 @@ export default function Onboarding() {
               <Trophy size={15} />
               WorldCup Fan Planner
             </div>
-            <h1 className="hero-title-veronica mt-5 max-w-4xl text-[3.4rem] leading-[0.88] sm:text-[6.2rem] lg:text-[7.15rem]">
-              TU VIAJE AL MUNDIAL<span className="hero-year-graffiti">2026</span>
-              <span className="hero-start-badge">¿Volamos?</span>
-            </h1>
+            <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_560px]">
+              <h1 className="hero-title-veronica max-w-4xl text-[3.4rem] leading-[0.88] sm:text-[6.2rem] lg:text-[7.15rem]">
+                TU VIAJE AL MUNDIAL<span className="hero-year-graffiti">2026</span>
+                <span className="hero-start-badge">¿Volamos?</span>
+              </h1>
+              <div className="group relative overflow-hidden rounded-[22px] border border-cyan-100/15 bg-slate-950/15 shadow-[0_30px_80px_rgba(2,6,23,0.35)] ring-1 ring-cyan-100/10 backdrop-blur-[2px]">
+                <video
+                  ref={heroVideoRef}
+                  src={titleRightVideo}
+                  autoPlay
+                  loop
+                  muted
+                  defaultMuted
+                  playsInline
+                  preload="auto"
+                  controls={false}
+                  className="hero-video-blend aspect-video h-auto w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(255,255,255,0.16),transparent_42%),linear-gradient(135deg,rgba(2,6,23,0.15),rgba(2,6,23,0.45))]" />
+                <div className="pointer-events-none absolute inset-0 ring-1 ring-white/10" />
+              </div>
+            </div>
             <div className="mt-12 grid max-w-2xl gap-3 sm:grid-cols-3">
               <div className="hero-stat-card p-4">
                 <Flag className="mb-3" size={22} />
