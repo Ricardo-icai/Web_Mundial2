@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { CalendarDays, CloudSun, Landmark, Loader2, Map, MapPin, Star, Trophy, Tv, X } from "lucide-react";
+import { CalendarDays, CloudSun, Landmark, Loader2, MapPin, Menu, Star, Trophy, Tv, X } from "lucide-react";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
@@ -39,6 +39,7 @@ export default function Dashboard() {
   const [savingFlightFavoriteKey, setSavingFlightFavoriteKey] = useState("");
   const [flightFavoriteMessage, setFlightFavoriteMessage] = useState("");
   const [flightFavoriteError, setFlightFavoriteError] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const isLocalPlan = profile.mode === "stay_origin";
   const isFollowTeamPlan = profile.mode === "follow_team";
   const isTravelCityPlan = profile.mode === "travel_city";
@@ -76,6 +77,14 @@ export default function Dashboard() {
   );
   const overBudgetLabel = formatCurrency(overBudgetAmount, plan.costs.currency);
   const flightTotalLabel = formatCurrency(Number(plan.costs.estimatedTotalCost || 0), plan.costs.currency);
+  const officialFlightTotalLabel = formatCurrency(
+    Number((plan.costs.officialEstimatedTotalCost ?? plan.costs.estimatedTotalCost) || 0),
+    plan.costs.currency
+  );
+  const adaptedFlightTotalLabel = formatCurrency(
+    Number((plan.costs.adaptedEstimatedTotalCost ?? plan.costs.estimatedTotalCost) || 0),
+    plan.costs.currency
+  );
   const adultsCount = Number(plan?.profile?.adults ?? profile?.adults ?? 1);
   const favoriteTitle = useMemo(() => {
     const modeLabel =
@@ -192,42 +201,66 @@ export default function Dashboard() {
                   ? `Plan de viaje a ${effectiveDestinationCity}: vuelos, horarios de partidos, clima y zonas clave alrededor de la sede.`
                   : `${profile.favoriteTeam || "Mundial 2026"} desde ${profile.originCity} hacia ${effectiveDestinationCity}, con vuelos, ruta y seguimiento completo de partidos.`}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-3 text-sm font-black text-slate-950"
-                to="/itinerary"
+            <div className="mt-6 inline-flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-3 text-sm font-black text-white backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-lg"
               >
-                <CalendarDays size={18} />
-                Itinerario
-              </Link>
-              <Link
-                className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-3 text-sm font-black text-white backdrop-blur"
-                to="/map"
-              >
-                <Map size={18} />
-                Mapa
-              </Link>
-              <Link
-                className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-3 text-sm font-black text-white backdrop-blur"
-                to="/attractions"
-              >
-                <Landmark size={18} />
-                Zonas que ver
-              </Link>
-              <Link
-                className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-3 text-sm font-black text-white backdrop-blur"
-                to="/tournament"
-              >
-                <Trophy size={18} />
-                Torneo
-              </Link>
+                <Menu size={18} />
+                Menu
+              </button>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 max-w-sm">
               <OptionMenu currentMode={profile.mode} />
             </div>
           </div>
         </div>
       </section>
+
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60">
+          <button type="button" className="absolute inset-0 h-full w-full" aria-label="Cerrar menu" onClick={() => setMenuOpen(false)} />
+          <aside className="absolute right-0 top-0 h-full w-full max-w-sm border-l border-slate-200 bg-white p-5 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-black text-slate-950">Menu de acciones</h2>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 transition-all duration-200 hover:bg-slate-100 hover:shadow-sm"
+              >
+                <X size={17} />
+              </button>
+            </div>
+            <div className="mt-5 grid gap-3">
+              <Link
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
+                to="/itinerary"
+              >
+                <CalendarDays size={17} />
+                Itinerario completo
+              </Link>
+              <Link
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
+                to="/attractions"
+              >
+                <Landmark size={17} />
+                Planes y zonas
+              </Link>
+              <Link
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
+                to="/tournament"
+              >
+                <Trophy size={17} />
+                Torneo
+              </Link>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <div className="mx-auto mt-3 max-w-7xl px-4">
         <section className={`grid gap-4 ${isTravelCityPlan ? "md:grid-cols-3" : "md:grid-cols-4"}`}>
@@ -279,6 +312,13 @@ export default function Dashboard() {
                     <p className="mt-1">
                       Vuelos para {adultsCount} {adultsCount === 1 ? "viajero" : "viajeros"}: {flightTotalLabel}
                     </p>
+                    <p className="mt-1">Coste oficial (sin recortes): {officialFlightTotalLabel}</p>
+                    <p className="mt-1">Coste readaptado al presupuesto: {adaptedFlightTotalLabel}</p>
+                    {isOverBudget && plan?.costs?.suggestedSkipDestination && (
+                      <p className="mt-1">
+                        Destino que mas encarece la ruta: {plan.costs.suggestedSkipDestination}. Conviene ahorrarse ese tramo.
+                      </p>
+                    )}
                     {isOverBudget && (
                       <Link to="/attractions" className="mt-2 inline-flex rounded-md bg-brandBlue px-3 py-2 text-xs font-black text-white">
                         Ver planes culturales
@@ -483,6 +523,30 @@ export default function Dashboard() {
                 </article>
               ))}
             </div>
+            {(plan?.followTeamRoute?.skippedLegs || []).length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-black text-red-700">Tramos recortados por presupuesto</p>
+                <div className="mt-2 grid gap-3 md:grid-cols-2">
+                  {plan.followTeamRoute.skippedLegs.map((leg, index) => (
+                    <article
+                      key={`skipped-${leg.fromCity}-${leg.toCity}-${index + 1}`}
+                      className="rounded-md border border-red-200 bg-red-50 p-3"
+                    >
+                      <p className="text-xs font-bold uppercase text-red-700">No recomendado</p>
+                      <p className="mt-1 text-sm font-black text-red-900">
+                        {leg.fromCity} a {leg.toCity}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-red-800">{leg.reason || "Fuera de presupuesto"}</p>
+                      {leg?.recommended?.price != null && (
+                        <p className="mt-1 text-sm font-semibold text-red-800">
+                          Coste estimado tramo: {Number(leg.recommended.price || 0) * adultsCount} {leg.recommended.currency}
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
 
