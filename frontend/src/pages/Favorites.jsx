@@ -138,7 +138,7 @@ export default function Favorites() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 px-4 py-6">
+    <main className="planner-soft-background min-h-screen px-4 py-6">
       <div className="mx-auto max-w-7xl space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">

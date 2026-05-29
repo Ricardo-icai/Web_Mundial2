@@ -101,7 +101,7 @@ export default function Itinerary() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 pb-6">
+    <main className="planner-soft-background min-h-screen pb-6">
       <PageHero
         image={itineraryHeroImage}
         imageAlt="Avion en pista antes del viaje"

@@ -15,6 +15,18 @@
   }
 }
 
+.planner-soft-background {
+  background-color: #f4f7fb;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(239, 246, 255, 0.56)),
+    repeating-linear-gradient(0deg, rgba(15, 23, 42, 0.026) 0 1px, transparent 1px 78px),
+    repeating-linear-gradient(90deg, rgba(15, 23, 42, 0.022) 0 1px, transparent 1px 86px),
+    linear-gradient(118deg, transparent 0 12%, rgba(37, 99, 235, 0.035) 12.1% 12.8%, transparent 12.9% 38%, rgba(239, 68, 68, 0.028) 38.1% 38.7%, transparent 38.8%),
+    linear-gradient(62deg, transparent 0 22%, rgba(34, 197, 94, 0.03) 22.1% 22.7%, transparent 22.8% 58%, rgba(245, 158, 11, 0.032) 58.1% 58.8%, transparent 58.9%);
+  background-attachment: fixed;
+  background-size: auto, 78px 78px, 86px 86px, 760px 520px, 680px 460px;
+}
+
 @keyframes news-marquee {
   from {
     transform: translate3d(0, 0, 0);

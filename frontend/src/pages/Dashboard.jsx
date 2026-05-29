@@ -164,7 +164,7 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] pb-8 text-slate-950">
+    <main className="planner-soft-background min-h-screen pb-8 text-slate-950">
       <section className="relative min-h-[470px] overflow-hidden px-4 py-6 text-white">
         <img src={heroImage} alt="Estadio de futbol lleno" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-slate-950/58" />

@@ -135,7 +135,7 @@ export default function Tournament() {
   if (!plan || !profile) return <Navigate to="/" replace />;
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] pb-6 text-slate-950">
+    <main className="planner-soft-background min-h-screen pb-6 text-slate-950">
       <PageHero
         image={tournamentHeroImage}
         imageAlt="Balon de futbol en cesped"

@@ -10,7 +10,7 @@ export default function MapView() {
   const routeSegments = plan?.followTeamRoute?.segments || [];
 
   return (
-    <main className="min-h-screen bg-slate-100 px-4 py-6">
+    <main className="planner-soft-background min-h-screen px-4 py-6">
       <div className="mx-auto max-w-6xl space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold">Mapa de Trayectos</h1>
