@@ -146,7 +146,7 @@ export default function Itinerary() {
             {plan.flightError && <p className="mt-2 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               {followTeamLegs.map((leg, index) => (
-                <article key={`${leg.fromCity}-${leg.toCity}-${index + 1}`} className="rounded-md border border-slate-200 p-3">
+                <article key={`${leg.fromCity}-${leg.toCity}-${index + 1}`} className="rounded-md border border-slate-200 bg-slate-50/80 p-3">
                   <p className="text-xs font-bold uppercase text-slate-500">Tramo {index + 1}</p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     {leg.fromCity} a {leg.toCity}

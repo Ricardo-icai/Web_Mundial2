@@ -141,7 +141,7 @@ export default function Attractions() {
                       </p>
                       <div className="mt-3 space-y-3">
                         {(cityGuide?.restaurants || []).map((restaurant) => (
-                          <article key={`${cityGuide.city}-${restaurant.name}-${restaurant.address}`} className="rounded-md border border-slate-200 p-3">
+                          <article key={`${cityGuide.city}-${restaurant.name}-${restaurant.address}`} className="rounded-md border border-slate-200 bg-slate-50/80 p-3">
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm font-black">{restaurant.name}</p>
                               {restaurant.rating && (
@@ -222,7 +222,7 @@ export default function Attractions() {
                 </p>
                 <div className="mt-3 space-y-3">
                   {(guide?.restaurants || []).map((restaurant) => (
-                    <article key={`${restaurant.name}-${restaurant.address}`} className="rounded-md border border-slate-200 p-3">
+                    <article key={`${restaurant.name}-${restaurant.address}`} className="rounded-md border border-slate-200 bg-slate-50/80 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-black">{restaurant.name}</p>
                         {restaurant.rating && (

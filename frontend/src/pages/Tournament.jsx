@@ -19,7 +19,7 @@ function TeamChip({ team }) {
       }
     : undefined;
   return (
-    <div className="flex items-center gap-2 rounded-md border border-slate-200 px-2 py-2" style={style}>
+    <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white/90 px-2 py-2" style={style}>
       <TeamBadge team={team} width={32} className="h-4 w-6" />
       <span className="text-sm font-semibold text-slate-800">{team}</span>
     </div>
@@ -48,7 +48,7 @@ function BracketMatch({ home, away }) {
   const homeFlag = teamFlagUrl(home, 160);
   const awayFlag = teamFlagUrl(away, 160);
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-2 shadow-sm">
+    <div className="rounded-md border border-slate-200 bg-slate-50/80 p-2 shadow-sm">
       <div
         className="flex items-center justify-between gap-2 border-b border-slate-100 pb-1"
         style={

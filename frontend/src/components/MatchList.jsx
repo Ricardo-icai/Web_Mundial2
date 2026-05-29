@@ -23,7 +23,7 @@ export default function MatchList({
       <h2 className="text-lg font-black">{title}</h2>
       <div className="mt-3 grid gap-3">
         {matches.map((match) => (
-          <article key={match.id} className="rounded-md border border-slate-200 p-3">
+          <article key={match.id} className="rounded-md border border-slate-200 bg-slate-50/80 p-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2 text-sm font-black text-slate-950">

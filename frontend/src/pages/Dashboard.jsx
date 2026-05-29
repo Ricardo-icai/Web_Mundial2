@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { CloudSun, Landmark, Loader2, MapPin, Star, Trophy, Tv, X } from "lucide-react";
+import { CheckCircle2, CloudSun, Flag, Landmark, Loader2, MapPin, Star, Trophy, Tv, Wallet, X } from "lucide-react";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
@@ -214,26 +214,58 @@ export default function Dashboard() {
       <div className="mx-auto mt-3 max-w-7xl px-4">
         <section className={`grid gap-4 ${isTravelCityPlan ? "md:grid-cols-3" : "md:grid-cols-4"}`}>
           {!isTravelCityPlan && (
-            <div className="rounded-lg border border-white/80 bg-white p-4 shadow-lg">
-              <p className="text-xs font-bold uppercase text-slate-500">Seleccion</p>
-              <p className="mt-1 text-2xl font-black">{profile.favoriteTeam || "Mundial 2026"}</p>
+            <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] p-4 shadow-sm ring-1 ring-white/70">
+              <div className="absolute inset-x-0 top-0 h-1 bg-brandBlue/70" />
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brandBlue/10 text-brandBlue">
+                  <Flag size={18} />
+                </span>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase text-slate-500">Seleccion</p>
+                  <p className="mt-1 text-xl font-semibold leading-snug text-slate-950">{profile.favoriteTeam || "Mundial 2026"}</p>
+                </div>
+              </div>
             </div>
           )}
-          <div className="rounded-lg border border-white/80 bg-white p-4 shadow-lg">
-            <p className="text-xs font-bold uppercase text-slate-500">{isLocalPlan ? "Ciudad" : "Destino"}</p>
-            <p className="mt-1 text-2xl font-black">{isLocalPlan ? profile.originCity : effectiveDestinationCity}</p>
+          <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] p-4 shadow-sm ring-1 ring-white/70">
+            <div className="absolute inset-x-0 top-0 h-1 bg-cyan-500/70" />
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-cyan-50 text-cyan-700">
+                <MapPin size={18} />
+              </span>
+              <div>
+                <p className="text-[11px] font-semibold uppercase text-slate-500">{isLocalPlan ? "Ciudad" : "Destino"}</p>
+                <p className="mt-1 text-xl font-semibold leading-snug text-slate-950">{isLocalPlan ? profile.originCity : effectiveDestinationCity}</p>
+              </div>
+            </div>
           </div>
-          <div className="rounded-lg border border-white/80 bg-white p-4 shadow-lg">
-            <p className="text-xs font-bold uppercase text-slate-500">Presupuesto</p>
-            <p className="mt-1 text-2xl font-black">
-              {selectedBudgetLabel}
-            </p>
+          <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] p-4 shadow-sm ring-1 ring-white/70">
+            <div className="absolute inset-x-0 top-0 h-1 bg-slate-400/80" />
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-700">
+                <Wallet size={18} />
+              </span>
+              <div>
+                <p className="text-[11px] font-semibold uppercase text-slate-500">Presupuesto</p>
+                <p className="mt-1 text-xl font-semibold leading-snug text-slate-950">
+                  {selectedBudgetLabel}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="rounded-lg border border-white/80 bg-white p-4 shadow-lg">
-            <p className="text-xs font-bold uppercase text-slate-500">Estado</p>
-            <p className={`mt-1 text-2xl font-black ${isOverBudget ? "text-red-600" : "text-emerald-600"}`}>
-              {budgetStatusLabel}
-            </p>
+          <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-[#f8fafc] p-4 shadow-sm ring-1 ring-white/70">
+            <div className={`absolute inset-x-0 top-0 h-1 ${isOverBudget ? "bg-red-400/80" : "bg-emerald-500/75"}`} />
+            <div className="flex items-start gap-3">
+              <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${isOverBudget ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
+                <CheckCircle2 size={18} />
+              </span>
+              <div>
+                <p className="text-[11px] font-semibold uppercase text-slate-500">Estado</p>
+                <p className={`mt-1 text-lg font-semibold leading-snug sm:text-xl ${isOverBudget ? "text-red-600" : "text-emerald-700"}`}>
+                  {budgetStatusLabel}
+                </p>
+              </div>
+            </div>
             {isOverBudget && overBudgetAmount > 0 && (
               <div className="budget-overrun-badge mt-4 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-lime-300 text-center text-slate-950 shadow-[0_0_34px_rgba(190,242,100,0.95)] ring-4 ring-lime-100/80">
                 <span className="text-[10px] font-black uppercase leading-none text-slate-700">Se pasa</span>
@@ -438,7 +470,7 @@ export default function Dashboard() {
             {plan.flightError && <p className="mt-2 text-sm font-semibold text-amber-700">{plan.flightError}</p>}
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               {plan.followTeamRoute.legs.map((leg, index) => (
-                <article key={`${leg.fromCity}-${leg.toCity}-${index + 1}`} className="rounded-md border border-slate-200 p-3">
+                <article key={`${leg.fromCity}-${leg.toCity}-${index + 1}`} className="rounded-md border border-slate-200 bg-slate-50/80 p-3">
                   <p className="text-xs font-bold uppercase text-slate-500">Tramo {index + 1}</p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     {leg.fromCity} a {leg.toCity}
@@ -509,7 +541,7 @@ export default function Dashboard() {
               {plan.matches.map((match, index) => {
                 const leg = followTeamLegs[index] || null;
                 return (
-                  <article key={match.id} className="overflow-hidden rounded-md border border-slate-200">
+                  <article key={match.id} className="overflow-hidden rounded-md border border-slate-200 bg-slate-50/80">
                     {match.imageUrl ? (
                       <div className="relative h-40 w-full overflow-hidden bg-slate-900">
                         <img

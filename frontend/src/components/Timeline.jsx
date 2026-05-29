@@ -13,7 +13,7 @@ export default function Timeline({ items }) {
       <h3 className="mb-3 text-base font-semibold">Itinerario</h3>
       <ol className="space-y-3">
         {items.map((item) => (
-          <li key={`${item.day}-${item.date}`} className="rounded border border-slate-100 p-3">
+          <li key={`${item.day}-${item.date}`} className="rounded border border-slate-100 bg-slate-50/80 p-3">
             <p className="text-xs font-semibold uppercase text-slate-500">Dia {item.day}</p>
             <p className="text-sm font-medium">{item.title}</p>
             <p className="text-sm text-slate-600">
