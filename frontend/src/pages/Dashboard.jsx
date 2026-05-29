@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { CalendarDays, CloudSun, Landmark, Loader2, MapPin, Menu, Star, Trophy, Tv, X } from "lucide-react";
+import { CloudSun, Landmark, Loader2, MapPin, Star, Trophy, Tv, X } from "lucide-react";
 import NewspaperDropdown from "../components/NewspaperDropdown.jsx";
 import AuthPanel from "../components/AuthPanel.jsx";
 import MapLibreFlightsMap from "../components/MapLibreFlightsMap.jsx";
 import FlightCard, { AirlineBadge } from "../components/FlightCard.jsx";
 import MatchList from "../components/MatchList.jsx";
+import NavigationMenu from "../components/NavigationMenu.jsx";
 import OptionMenu from "../components/OptionMenu.jsx";
 import TeamBadge from "../components/TeamBadge.jsx";
 import Timeline from "../components/Timeline.jsx";
@@ -39,7 +40,6 @@ export default function Dashboard() {
   const [savingFlightFavoriteKey, setSavingFlightFavoriteKey] = useState("");
   const [flightFavoriteMessage, setFlightFavoriteMessage] = useState("");
   const [flightFavoriteError, setFlightFavoriteError] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
   const isLocalPlan = profile.mode === "stay_origin";
   const isFollowTeamPlan = profile.mode === "follow_team";
   const isTravelCityPlan = profile.mode === "travel_city";
@@ -167,11 +167,14 @@ export default function Dashboard() {
     <main className="min-h-screen bg-[#f5f7fb] pb-8 text-slate-950">
       <section className="relative min-h-[470px] overflow-hidden px-4 py-6 text-white">
         <img src={heroImage} alt="Estadio de futbol lleno" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-slate-950/55" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/65 to-transparent" />
+        <div className="absolute inset-0 bg-slate-950/58" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/72 to-slate-950/18" />
         <div className="relative mx-auto flex max-w-7xl flex-col gap-16">
           <header className="relative z-20 flex items-center justify-between gap-3 rounded-lg border border-cyan-100/20 bg-gradient-to-r from-[#06111f]/92 via-[#08304b]/88 to-[#0f3d2e]/88 p-3 shadow-[0_18px_45px_rgba(2,6,23,0.38)] backdrop-blur-2xl">
-            <NewspaperDropdown country={country} variant="glass" />
+            <div className="flex min-w-0 items-center gap-3">
+              <NavigationMenu />
+              <NewspaperDropdown country={country} variant="glass" />
+            </div>
             <div className="flex shrink-0 items-center gap-3">
               <AuthPanel />
               <a
@@ -201,66 +204,12 @@ export default function Dashboard() {
                   ? `Plan de viaje a ${effectiveDestinationCity}: vuelos, horarios de partidos, clima y zonas clave alrededor de la sede.`
                   : `${profile.favoriteTeam || "Mundial 2026"} desde ${profile.originCity} hacia ${effectiveDestinationCity}, con vuelos, ruta y seguimiento completo de partidos.`}
             </p>
-            <div className="mt-6 inline-flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setMenuOpen(true)}
-                className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-3 text-sm font-black text-white backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-lg"
-              >
-                <Menu size={18} />
-                Menu
-              </button>
-            </div>
             <div className="mt-4 max-w-sm">
               <OptionMenu currentMode={profile.mode} />
             </div>
           </div>
         </div>
       </section>
-
-      {menuOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60">
-          <button type="button" className="absolute inset-0 h-full w-full" aria-label="Cerrar menu" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute right-0 top-0 h-full w-full max-w-sm border-l border-slate-200 bg-white p-5 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-950">Menu de acciones</h2>
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 transition-all duration-200 hover:bg-slate-100 hover:shadow-sm"
-              >
-                <X size={17} />
-              </button>
-            </div>
-            <div className="mt-5 grid gap-3">
-              <Link
-                onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
-                to="/itinerary"
-              >
-                <CalendarDays size={17} />
-                Itinerario completo
-              </Link>
-              <Link
-                onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
-                to="/attractions"
-              >
-                <Landmark size={17} />
-                Planes y zonas
-              </Link>
-              <Link
-                onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-3 text-sm font-black text-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm"
-                to="/tournament"
-              >
-                <Trophy size={17} />
-                Torneo
-              </Link>
-            </div>
-          </aside>
-        </div>
-      )}
 
       <div className="mx-auto mt-3 max-w-7xl px-4">
         <section className={`grid gap-4 ${isTravelCityPlan ? "md:grid-cols-3" : "md:grid-cols-4"}`}>

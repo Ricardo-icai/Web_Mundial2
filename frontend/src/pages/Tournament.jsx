@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { ArrowLeft, Trophy } from "lucide-react";
+import { Navigate } from "react-router-dom";
+import { Trophy } from "lucide-react";
+import PageHero from "../components/PageHero.jsx";
 import { worldCupGroups } from "../data/worldCupGroups.js";
 import { knockoutBracket } from "../data/worldCupBracket.js";
 import TeamBadge from "../components/TeamBadge.jsx";
 import { usePlannerStore } from "../store/planner.store.js";
 import { teamFlagUrl } from "../utils/teamVisuals.js";
+import { tournamentHeroImage } from "../data/worldCupVisuals.js";
 
 function TeamChip({ team }) {
   const flag = teamFlagUrl(team, 160);
@@ -133,14 +135,16 @@ export default function Tournament() {
   if (!plan || !profile) return <Navigate to="/" replace />;
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] px-4 py-6 text-slate-950">
-      <div className="mx-auto max-w-7xl">
-        <Link to="/dashboard" className="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-black text-slate-700">
-          <ArrowLeft size={16} />
-          Volver al panel
-        </Link>
-        <h1 className="text-3xl font-black">Torneo 2026</h1>
-        <p className="mt-1 text-sm font-medium text-slate-600">Grupos completos y arbol de clasificacion hasta la final.</p>
+    <main className="min-h-screen bg-[#f5f7fb] pb-6 text-slate-950">
+      <PageHero
+        image={tournamentHeroImage}
+        imageAlt="Balon de futbol en cesped"
+        eyebrowIcon={<Trophy size={15} />}
+        eyebrow="Mundial 2026"
+        title="Torneo 2026"
+        description="Grupos completos y arbol de clasificacion hasta la final."
+      />
+      <div className="mx-auto max-w-7xl px-4 py-6">
         <div className="mt-4 flex gap-2">
           <button
             type="button"

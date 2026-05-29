@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import { cityCoordinates } from "../data/cityCoordinates.js";
+import { hostVenues } from "../data/hostVenues.js";
 
 function normalizeText(value = "") {
   return value
@@ -13,6 +14,74 @@ function normalizeText(value = "") {
 
 function getCoordinates(city) {
   return cityCoordinates[normalizeText(city)] || null;
+}
+
+const hostCountryByCity = hostVenues.reduce((lookup, venue) => {
+  lookup[normalizeText(venue.city)] = venue.countryCode;
+  return lookup;
+}, {});
+
+const cityCountryAliases = {
+  "new york": "us",
+  "new jersey": "us",
+  "san francisco": "us",
+  "san francisco bay area": "us",
+  "los angeles": "us",
+  washington: "us",
+  chicago: "us",
+  cancun: "mx",
+  "mexico city": "mx",
+  toronto: "ca",
+  vancouver: "ca",
+  montreal: "ca"
+};
+
+const legalNoticeByCountry = {
+  us: {
+    emoji: "🛂",
+    title: "Aviso USA",
+    text:
+      "Revisa antes de volar si necesitas ESTA o visado B; lleva pasaporte valido y recuerda que la autorizacion no garantiza entrada.",
+    sourceLabel: "ESTA oficial",
+    sourceUrl: "https://esta.cbp.dhs.gov/",
+    className: "border-amber-300 bg-amber-50 text-amber-950"
+  },
+  mx: {
+    emoji: "🌮",
+    title: "Aviso Mexico",
+    text:
+      "Comprueba si tu nacionalidad exige visa; al entrar pueden registrar tu estancia con FMM/FMMD y debes conservar el documento hasta salir.",
+    sourceLabel: "Gobierno MX",
+    sourceUrl: "https://portales.sre.gob.mx/6aec/images/documentos/fr/info-visas-ing.pdf",
+    className: "border-emerald-300 bg-emerald-50 text-emerald-950"
+  },
+  ca: {
+    emoji: "🍁",
+    title: "Aviso Canada",
+    text:
+      "Segun tu pasaporte y medio de entrada puedes necesitar eTA o visa de visitante; confirma requisitos oficiales antes de reservar.",
+    sourceLabel: "Canada.ca",
+    sourceUrl: "https://www.canada.ca/eTA",
+    className: "border-sky-300 bg-sky-50 text-sky-950"
+  }
+};
+
+function getCountryCode(city) {
+  const normalized = normalizeText(city);
+  return hostCountryByCity[normalized] || cityCountryAliases[normalized] || null;
+}
+
+function getLegalNotices(destinationCity, segments) {
+  const destinationCities = (segments || [])
+    .map((segment) => segment.toCity)
+    .filter(Boolean);
+  if (destinationCity) destinationCities.push(destinationCity);
+
+  const countryCodes = Array.from(
+    new Set(destinationCities.map((city) => getCountryCode(city)).filter((countryCode) => legalNoticeByCountry[countryCode]))
+  );
+
+  return countryCodes.map((countryCode) => legalNoticeByCountry[countryCode]);
 }
 
 function segmentsToFeatures(originCity, destinationCity, segments) {
@@ -60,6 +129,7 @@ export default function MapLibreFlightsMap({ originCity, destinationCity, segmen
     () => segmentsToFeatures(originCity, destinationCity, segments),
     [originCity, destinationCity, segments]
   );
+  const legalNotices = useMemo(() => getLegalNotices(destinationCity, segments), [destinationCity, segments]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return undefined;
@@ -173,6 +243,36 @@ export default function MapLibreFlightsMap({ originCity, destinationCity, segmen
     <section className="rounded-md border border-slate-200 bg-white p-4">
       <h3 className="mb-3 text-base font-semibold">Mapa de Trayectos (MapLibre)</h3>
       <div ref={containerRef} className="h-[360px] w-full overflow-hidden rounded-md" />
+      {legalNotices.length > 0 && (
+        <div className="mt-4 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-3 shadow-sm">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h4 className="text-sm font-black text-slate-950">⚖️ Avisos legales de viaje</h4>
+            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black uppercase text-slate-500 ring-1 ring-slate-200">
+              Oficial
+            </span>
+          </div>
+          <div className="max-h-36 space-y-2 overflow-y-auto pr-1">
+            {legalNotices.map((notice) => (
+              <article key={notice.title} className={`rounded-md border px-3 py-2 ${notice.className}`}>
+                <p className="text-sm font-black">
+                  <span aria-hidden="true">{notice.emoji}</span> {notice.title}
+                </p>
+                <p className="mt-1 text-xs font-semibold leading-5">
+                  {notice.text}{" "}
+                  <a
+                    href={notice.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex font-black underline decoration-2 underline-offset-2"
+                  >
+                    {notice.sourceLabel}
+                  </a>
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

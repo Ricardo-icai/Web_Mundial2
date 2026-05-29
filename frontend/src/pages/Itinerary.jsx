@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { Loader2, Star } from "lucide-react";
+import { Navigate } from "react-router-dom";
+import { CalendarDays, Loader2, Star } from "lucide-react";
+import PageHero from "../components/PageHero.jsx";
 import { saveFavoriteItinerary } from "../services/api.client.js";
 import FlightCard, { AirlineBadge } from "../components/FlightCard.jsx";
 import Timeline from "../components/Timeline.jsx";
 import { usePlannerStore } from "../store/planner.store.js";
+import { itineraryHeroImage } from "../data/worldCupVisuals.js";
 
 export default function Itinerary() {
   const { plan, profile, authToken } = usePlannerStore();
@@ -99,43 +101,42 @@ export default function Itinerary() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 px-4 py-6">
-      <div className="mx-auto max-w-4xl space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold">Itinerario Completo</h1>
-            {authToken && !isOpenedFromFavorite && (
-              <button
-                type="button"
-                onClick={onSaveFavorite}
-                disabled={savingFavorite}
-                title={favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
-                className={`group inline-flex h-10 w-10 items-center justify-center rounded-md border transition-all duration-200 ${
-                  favoriteSaved
-                    ? "border-amber-400 bg-amber-50 text-amber-500"
-                    : "border-slate-300 bg-white text-slate-600 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-50 hover:shadow-[0_8px_20px_rgba(245,158,11,0.25)]"
-                }`}
-              >
-                {savingFavorite ? (
-                  <Loader2 className="animate-spin" size={18} />
-                ) : (
-                  <Star
-                    size={18}
-                    className={`transition-all duration-200 ${favoriteSaved ? "fill-amber-400 text-amber-500" : "text-slate-600 group-hover:scale-110 group-hover:text-amber-500"}`}
-                  />
-                )}
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            {!authToken && <span className="text-xs font-semibold text-slate-500">Inicia sesion para guardar favoritos</span>}
-            <Link to="/dashboard" className="rounded-md border border-slate-300 px-3 py-2 text-sm">
-              Volver
-            </Link>
-          </div>
-        </div>
+    <main className="min-h-screen bg-slate-100 pb-6">
+      <PageHero
+        image={itineraryHeroImage}
+        imageAlt="Avion en pista antes del viaje"
+        eyebrowIcon={<CalendarDays size={15} />}
+        eyebrow="Itinerario"
+        title="Itinerario completo"
+        description={
+          isFollowTeamPlan
+            ? `Ruta para seguir a ${profile?.favoriteTeam || "tu seleccion"} desde ${profile?.originCity || "origen"}.`
+            : isTravelCityPlan
+              ? `Opciones de vuelo y agenda para viajar a ${profile?.destinationCity || plan?.profile?.destinationCity || "la sede"}.`
+              : `Agenda para vivir el Mundial desde ${profile?.originCity || "tu ciudad"}.`
+        }
+        actions={
+          authToken && !isOpenedFromFavorite ? (
+            <button
+              type="button"
+              onClick={onSaveFavorite}
+              disabled={savingFavorite}
+              className={`group inline-flex items-center gap-2 rounded-md px-4 py-3 text-sm font-black transition-all duration-200 ${
+                favoriteSaved
+                  ? "bg-amber-50 text-amber-700"
+                  : "bg-white text-slate-950 hover:-translate-y-0.5 hover:bg-amber-50 hover:text-amber-800 hover:shadow-lg"
+              }`}
+            >
+              {savingFavorite ? <Loader2 className="animate-spin" size={18} /> : <Star size={18} className={favoriteSaved ? "fill-amber-400 text-amber-500" : ""} />}
+              {favoriteSaved ? "Guardado" : "Guardar itinerario"}
+            </button>
+          ) : null
+        }
+      />
+      <div className="mx-auto max-w-4xl space-y-4 px-4 py-6">
         {favoriteError && <p className="text-sm font-semibold text-amber-700">{favoriteError}</p>}
         {favoriteSaved && <p className="text-sm font-semibold text-emerald-700">Itinerario guardado en favoritos.</p>}
+        {!authToken && <p className="text-xs font-semibold text-slate-500">Inicia sesion para guardar favoritos.</p>}
         {isFollowTeamPlan && followTeamLegs.length > 0 && (
           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="text-lg font-black">Ruta para seguir a tu seleccion</h2>
