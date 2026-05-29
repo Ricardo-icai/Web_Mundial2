@@ -191,7 +191,7 @@ export default function Dashboard() {
               <Trophy size={15} />
               Fan Planner 2026
             </div>
-            <h1 className="text-4xl font-black leading-tight sm:text-6xl">
+            <h1 className="display-heading-small text-3xl leading-tight sm:text-5xl">
               Tu viaje al Mundial con energia de final.
             </h1>
             <p className="mt-4 max-w-2xl text-base font-medium text-white/85 sm:text-lg">

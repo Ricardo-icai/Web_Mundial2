@@ -133,8 +133,8 @@ export default function NewsMagazine({ country }) {
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b border-white/15 pb-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-brandRed">Prensa internacional</p>
-            <h2 className="mt-2 text-3xl font-black sm:text-5xl">Noticias que se mueven contigo</h2>
+            <p className="text-lg font-black uppercase tracking-[0.32em] text-brandRed sm:text-2xl">Prensa internacional</p>
+            <h2 className="display-heading-small mt-2 text-2xl sm:text-4xl">Noticias que se mueven contigo</h2>
           </div>
           <p className="max-w-md text-sm font-semibold leading-6 text-white/65">
             Titulares enlazados al medio deportivo elegido y fuentes clave del Mundial 2026.

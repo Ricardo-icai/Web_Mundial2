@@ -62,7 +62,7 @@ export default function Attractions() {
               <MapPin size={15} />
               Zonas que ver
             </div>
-            <h1 className="text-4xl font-black leading-tight sm:text-6xl">{guide?.city || destinationCity}</h1>
+            <h1 className="display-heading-small text-3xl leading-tight sm:text-5xl">{guide?.city || destinationCity}</h1>
             <p className="mt-4 max-w-2xl text-base font-medium text-white/85 sm:text-lg">
               {isFollowTeam
                 ? "Guia completa para todas las ciudades de tu ruta como fan: turismo, restaurantes y rutas de partido."

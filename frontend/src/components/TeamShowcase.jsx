@@ -6,7 +6,7 @@ export default function TeamShowcase() {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-brandRed">Mundial 2026</p>
-          <h2 className="text-2xl font-black text-slate-950">Selecciones clasificadas</h2>
+          <h2 className="display-heading-small text-xl text-slate-950 sm:text-2xl">Selecciones clasificadas</h2>
         </div>
         <p className="text-sm font-medium text-slate-600">48 equipos, 16 ciudades, 3 paises anfitriones</p>
       </div>

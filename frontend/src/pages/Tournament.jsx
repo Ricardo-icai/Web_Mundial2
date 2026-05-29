@@ -139,7 +139,7 @@ export default function Tournament() {
           <ArrowLeft size={16} />
           Volver al panel
         </Link>
-        <h1 className="text-3xl font-black">Torneo 2026</h1>
+        <h1 className="display-heading-small text-2xl sm:text-3xl">Torneo 2026</h1>
         <p className="mt-1 text-sm font-medium text-slate-600">Grupos completos y arbol de clasificacion hasta la final.</p>
         <div className="mt-4 flex gap-2">
           <button
