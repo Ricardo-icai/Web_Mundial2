@@ -143,7 +143,7 @@ export default function Favorites() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Star size={20} className="text-amber-500" />
-            <h1 className="text-2xl font-black text-slate-950">Itinerarios favoritos</h1>
+            <h1 className="display-heading-small text-xl text-slate-950 sm:text-2xl">Itinerarios favoritos</h1>
           </div>
           <Link to="/dashboard" className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-black text-slate-700">
             Volver

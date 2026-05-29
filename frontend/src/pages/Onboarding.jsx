@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ChevronDown, Flag, Home, MapPinned, Plane, Shield, Trophy, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, Flag, Globe2, Home, MapPinned, Plane, Shield, Trophy } from "lucide-react";
 import AirportPicker from "../components/AirportPicker.jsx";
 import CityAutocomplete from "../components/CityAutocomplete.jsx";
 import HostVenueSelect from "../components/HostVenueSelect.jsx";
@@ -186,31 +186,32 @@ export default function Onboarding() {
         <img src={heroImage} alt="Estadio mundialista" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-slate-950/70" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-slate-950/20" />
-        <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(560px,660px)] lg:items-center">
-          <div className="py-10 lg:py-20">
+        <div className="hero-plane-flight" aria-hidden="true">
+          <Plane size={52} strokeWidth={2.3} />
+        </div>
+        <div className="relative mx-auto max-w-7xl space-y-8">
+          <div className="py-10 pb-0 lg:py-14 lg:pb-0">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] backdrop-blur">
               <Trophy size={15} />
               WorldCup Fan Planner
             </div>
-            <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight sm:text-6xl">
-              Planifica tu viaje al Mundial 2026 como si ya estuvieras en la grada.
+            <h1 className="hero-title-veronica mt-5 max-w-4xl text-[3.4rem] leading-[0.88] sm:text-[6.2rem] lg:text-[7.15rem]">
+              TU VIAJE AL MUNDIAL<span className="hero-year-graffiti">2026</span>
+              <span className="hero-start-badge">¿Volamos?</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base font-medium text-white/85 sm:text-lg">
-              Vuelos, ruta, clima, periodicos y selecciones clasificadas en una experiencia visual inspirada en el futbol internacional.
-            </p>
-            <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur">
+            <div className="mt-12 grid max-w-2xl gap-3 sm:grid-cols-3">
+              <div className="hero-stat-card p-4">
                 <Flag className="mb-3" size={22} />
                 <p className="text-2xl font-black">48</p>
                 <p className="text-xs font-bold uppercase text-white/70">selecciones</p>
               </div>
-              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur">
+              <div className="hero-stat-card p-4">
                 <Plane className="mb-3" size={22} />
                 <p className="text-2xl font-black">16</p>
                 <p className="text-xs font-bold uppercase text-white/70">sedes</p>
               </div>
-              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur">
-                <Users className="mb-3" size={22} />
+              <div className="hero-stat-card p-4">
+                <Globe2 className="mb-3" size={22} />
                 <p className="text-2xl font-black">3</p>
                 <p className="text-xs font-bold uppercase text-white/70">paises</p>
               </div>
@@ -218,11 +219,11 @@ export default function Onboarding() {
           </div>
 
           <form
-            className="rounded-lg border border-cyan-100/35 bg-gradient-to-br from-white/20 via-cyan-200/10 to-slate-950/45 p-5 text-white shadow-[0_28px_90px_rgba(8,145,178,0.28)] ring-1 ring-cyan-100/25 backdrop-blur-2xl"
+            className="max-w-5xl rounded-lg border border-cyan-100/35 bg-gradient-to-br from-white/20 via-cyan-200/10 to-slate-950/45 p-5 text-white shadow-[0_28px_90px_rgba(8,145,178,0.28)] ring-1 ring-cyan-100/25 backdrop-blur-2xl"
             onSubmit={submit}
           >
-            <h2 className="text-2xl font-black">Crea tu plan</h2>
-            <p className="mt-1 text-sm font-semibold text-white/70">Elige como quieres vivir el Mundial y cambia de opcion cuando quieras.</p>
+            <h2 className="display-heading-small text-4xl sm:text-5xl">Crea tu plan</h2>
+            <p className="mt-4 text-base font-bold leading-7 text-white/85 sm:text-lg">Elige como quieres vivir el Mundial y cambia de opcion cuando quieras.</p>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               <div className="relative md:col-span-2">
                 <label className="text-sm font-bold">Tipo de plan</label>

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Playfair+Display:wght@700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,6 +107,139 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+.hero-title-veronica {
+  font-family: "Bungee Inline", "Impact", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.display-heading-small {
+  font-family: "Bungee Inline", "Impact", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.hero-year-graffiti {
+  display: inline-block;
+  animation: hero-year-bounce-in 680ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  color: #ffd21f;
+  font-family: "Playfair Display", "Didot", "Bodoni 72", serif;
+  font-size: 1.6em;
+  font-weight: 800;
+  line-height: 0.68;
+  letter-spacing: -0.03em;
+  margin-left: -0.16em;
+  padding-left: 0.08em;
+  text-shadow:
+    0 2px 0 rgba(4, 8, 18, 0.72),
+    0 10px 20px rgba(0, 0, 0, 0.38);
+  transform: translateY(0.18em) rotate(-11deg) skewX(-2deg);
+  transform-origin: left bottom;
+  -webkit-text-stroke: 0.45px rgba(4, 8, 18, 0.38);
+}
+
+.hero-start-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 0.2em;
+  margin-left: 4.7em;
+  min-height: 0.78em;
+  border-radius: 0.12em;
+  background: rgba(188, 232, 255, 0.94);
+  padding: 0.12em 0.34em 0.15em;
+  color: #08223a;
+  font-family: "Bungee Inline", "Impact", sans-serif;
+  font-size: 0.19em;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: 0 12px 28px rgba(2, 18, 36, 0.28);
+}
+
+.hero-plane-flight {
+  position: absolute;
+  top: 34%;
+  left: -6rem;
+  z-index: 12;
+  display: grid;
+  width: 4.75rem;
+  height: 4.75rem;
+  place-items: center;
+  border-radius: 9999px;
+  color: #e9fbff;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.55));
+  opacity: 0;
+  pointer-events: none;
+  animation: hero-plane-cross 4.5s linear 650ms both;
+}
+
+.hero-stat-card {
+  border: 1px solid rgba(153, 246, 255, 0.72);
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.5), rgba(125, 244, 255, 0.28));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 18px 42px rgba(8, 145, 178, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+@keyframes hero-plane-cross {
+  0% {
+    opacity: 0;
+    transform: translate3d(-6vw, 3.2rem, 0) rotate(68deg) scale(0.88);
+  }
+  8% {
+    opacity: 1;
+  }
+  22% {
+    transform: translate3d(22vw, 1.5rem, 0) rotate(70deg) scale(0.98);
+  }
+  46% {
+    transform: translate3d(46vw, -0.4rem, 0) rotate(71deg) scale(1.02);
+  }
+  70% {
+    transform: translate3d(70vw, -2.7rem, 0) rotate(69deg) scale(0.98);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 9rem), -5.2rem, 0) rotate(70deg) scale(0.9);
+  }
+}
+
+@keyframes hero-year-bounce-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(-0.06em, -0.32em, 0) scale(0.9) rotate(-15deg) skewX(-2deg);
+  }
+  62% {
+    opacity: 1;
+    transform: translate3d(0, 0.22em, 0) scale(1.03) rotate(-10deg) skewX(-2deg);
+  }
+  82% {
+    transform: translate3d(0, 0.15em, 0) scale(0.99) rotate(-11.5deg) skewX(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0.18em) rotate(-11deg) skewX(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-plane-flight {
+    display: none;
   }
 }
 

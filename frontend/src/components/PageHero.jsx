@@ -29,7 +29,7 @@ export default function PageHero({ image, imageAlt, eyebrowIcon, eyebrow, title,
             {eyebrowIcon}
             {eyebrow}
           </div>
-          <h1 className="text-4xl font-black leading-tight sm:text-6xl">{title}</h1>
+          <h1 className="display-heading-small text-4xl leading-tight sm:text-6xl">{title}</h1>
           {description && <p className="mt-4 max-w-2xl text-base font-medium text-white/85 sm:text-lg">{description}</p>}
           {actions && <div className="mt-6 flex flex-wrap gap-3">{actions}</div>}
         </div>
