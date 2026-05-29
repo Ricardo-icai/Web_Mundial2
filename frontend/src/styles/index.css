@@ -88,6 +88,19 @@
   animation: loading-pattern-drift 2s ease-in-out infinite alternate;
 }
 
+.loading-black-linework {
+  opacity: 0.42;
+  background-image:
+    linear-gradient(116deg, transparent 0 9%, rgba(0, 0, 0, 0.68) 9.15% 9.62%, transparent 9.8% 25%, rgba(0, 0, 0, 0.42) 25.15% 25.52%, transparent 25.7%),
+    linear-gradient(64deg, transparent 0 15%, rgba(0, 0, 0, 0.38) 15.1% 15.48%, transparent 15.65% 42%, rgba(0, 0, 0, 0.6) 42.15% 42.58%, transparent 42.76%),
+    linear-gradient(22deg, transparent 0 30%, rgba(0, 0, 0, 0.34) 30.1% 30.42%, transparent 30.58% 64%, rgba(0, 0, 0, 0.58) 64.1% 64.5%, transparent 64.68%),
+    repeating-linear-gradient(155deg, transparent 0 64px, rgba(0, 0, 0, 0.24) 65px 67px, transparent 68px 126px),
+    repeating-linear-gradient(28deg, transparent 0 116px, rgba(0, 0, 0, 0.32) 117px 120px, transparent 121px 212px);
+  background-position: center, center, 18% 42%, center, 70% 35%;
+  background-size: 820px 620px, 980px 720px, 720px 520px, 300px 300px, 460px 460px;
+  mask-image: radial-gradient(circle at center, transparent 0 220px, rgba(0, 0, 0, 0.7) 285px, #000 360px);
+}
+
 .loading-logo-card {
   animation: loading-logo-pulse 2s ease-in-out infinite;
 }
@@ -98,6 +111,52 @@
 
 .loading-logo-orbit-reverse {
   animation: loading-logo-spin 2.6s linear infinite reverse;
+}
+
+.loading-plane-orbit {
+  animation: loading-plane-circle 3.4s linear infinite;
+  will-change: transform;
+}
+
+.loading-plane-wrap {
+  position: absolute;
+  left: 50%;
+  top: -0.45rem;
+  display: flex;
+  align-items: center;
+  transform: translateX(-50%) rotate(88deg);
+}
+
+.loading-plane-illustration {
+  width: 3.7rem;
+  height: auto;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.38));
+  overflow: visible;
+}
+
+.loading-plane-doodle-shadow {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.42);
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loading-plane-doodle {
+  fill: #fff;
+  stroke: #151515;
+  stroke-width: 8.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loading-plane-trail {
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-right: 0.4rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(10, 10, 10, 0.72));
 }
 
 .loading-dot {
@@ -130,6 +189,15 @@
 }
 
 @keyframes loading-logo-spin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes loading-plane-circle {
   from {
     transform: rotate(0deg) scale(1);
   }
