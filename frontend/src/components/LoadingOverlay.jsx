@@ -34,7 +34,7 @@ export default function LoadingOverlay({ message = "Cargando" }) {
             <img src={fifa26Logo} alt="FIFA World Cup 26" className="h-full w-full object-contain" />
           </div>
         </div>
-        <p className="mt-8 text-3xl font-black uppercase tracking-[0.14em] sm:text-4xl">{message}</p>
+        <p className="display-heading-small mt-8 text-4xl uppercase sm:text-5xl">{message}</p>
         <div className="mt-5 flex items-center gap-2" aria-hidden="true">
           <span className="loading-dot" />
           <span className="loading-dot loading-dot-delay-1" />
