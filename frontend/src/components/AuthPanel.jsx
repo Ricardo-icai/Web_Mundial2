@@ -22,7 +22,7 @@ function formatShortDate(value) {
   return new Intl.DateTimeFormat("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 
-export default function AuthPanel() {
+export default function AuthPanel({ openRequestToken = 0, openRequestMode = "login" }) {
   const navigate = useNavigate();
   const { authUser, authToken, setAuth, logoutAuth, setPlan, setProfile } = usePlannerStore();
   const [open, setOpen] = useState(false);
@@ -80,6 +80,13 @@ export default function AuthPanel() {
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!openRequestToken) return;
+    setMode(openRequestMode === "register" ? modes.register : modes.login);
+    setOpen(true);
+    setError("");
+  }, [openRequestToken, openRequestMode]);
 
   useEffect(() => {
     if (!menuOpen || !authToken) return;

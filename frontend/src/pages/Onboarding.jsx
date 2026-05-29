@@ -54,8 +54,9 @@ const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolv
 export default function Onboarding() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { profile, setProfile, setPlan, setError, setLoading, loading, error, setCountry } = usePlannerStore();
+  const { profile, setProfile, setPlan, setError, setLoading, loading, error, setCountry, authToken } = usePlannerStore();
   const initialMode = searchParams.get("mode") || profile?.mode || "travel_city";
+  const [authOpenRequestToken, setAuthOpenRequestToken] = useState(0);
 
   const [form, setForm] = useState({
     mode: initialMode,
@@ -101,6 +102,11 @@ export default function Onboarding() {
 
   const submit = async (event) => {
     event.preventDefault();
+    if (!authToken) {
+      setError("Debes iniciar sesion para generar un plan.");
+      setAuthOpenRequestToken((current) => current + 1);
+      return;
+    }
     const adults = Number(form.adults);
     const budgetPerPerson = form.budget ? Number(form.budget) : null;
     try {
@@ -162,7 +168,7 @@ export default function Onboarding() {
         <div className="mx-auto flex w-full max-w-7xl items-center gap-3">
           <NewspaperDropdown country={form.country} variant="glass" />
           <div className="ml-auto">
-            <AuthPanel />
+            <AuthPanel openRequestToken={authOpenRequestToken} openRequestMode="login" />
           </div>
           <a
             href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026"
@@ -429,7 +435,7 @@ export default function Onboarding() {
             className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-cyan-200 px-4 text-sm font-black text-slate-950 transition hover:bg-white disabled:cursor-not-allowed disabled:bg-white/25 disabled:text-white/60 md:col-span-2"
           >
             {profile && <ArrowLeft size={18} />}
-            {loading ? "Generando plan..." : "Generar plan"}
+            {loading ? "Generando plan..." : authToken ? "Generar plan" : "Inicia sesion para generar"}
             {!loading && <ArrowRight size={18} />}
           </button>
           </div>
