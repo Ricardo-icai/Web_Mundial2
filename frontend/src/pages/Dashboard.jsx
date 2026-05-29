@@ -392,7 +392,7 @@ export default function Dashboard() {
                       type="button"
                       disabled={!plan?.flights?.[flightKey] || Boolean(savingFlightFavoriteKey)}
                       onClick={() => onSaveTravelFlightFavorite(flightKey)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-50 hover:text-amber-800 hover:shadow-[0_8px_20px_rgba(245,158,11,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {savingFlightFavoriteKey === flightKey ? (
                         <>
@@ -401,7 +401,7 @@ export default function Dashboard() {
                         </>
                       ) : (
                         <>
-                          <Star size={13} />
+                          <Star size={13} className="text-slate-600 transition-all duration-200 group-hover:scale-110 group-hover:text-amber-500" />
                           Guardar en favoritos este vuelo + itinerario
                         </>
                       )}
@@ -423,11 +423,20 @@ export default function Dashboard() {
                   onClick={onSaveFavorite}
                   disabled={savingFavorite}
                   title={favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-md border ${
-                    favoriteSaved ? "border-amber-400 bg-amber-50 text-amber-500" : "border-slate-300 bg-white text-slate-600"
+                  className={`group inline-flex h-8 w-8 items-center justify-center rounded-md border transition-all duration-200 ${
+                    favoriteSaved
+                      ? "border-amber-400 bg-amber-50 text-amber-500"
+                      : "border-slate-300 bg-white text-slate-600 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-50 hover:shadow-[0_8px_20px_rgba(245,158,11,0.25)]"
                   }`}
                 >
-                  {savingFavorite ? <Loader2 className="animate-spin" size={14} /> : <Star size={14} className={favoriteSaved ? "fill-amber-400" : ""} />}
+                  {savingFavorite ? (
+                    <Loader2 className="animate-spin" size={14} />
+                  ) : (
+                    <Star
+                      size={14}
+                      className={`transition-all duration-200 ${favoriteSaved ? "fill-amber-400 text-amber-500" : "text-slate-600 group-hover:scale-110 group-hover:text-amber-500"}`}
+                    />
+                  )}
                 </button>
               )}
             </div>
